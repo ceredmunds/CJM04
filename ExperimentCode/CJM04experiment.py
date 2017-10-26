@@ -4,14 +4,15 @@
 # CERE - 2-10-2017 - Created
 import os
 from itertools import permutations
+from numpy.random import choice
 from random import shuffle
 from psychopy import visual, event, core, gui, data
 
-#os.chdir("C:/Users/cjmitchell/Desktop/PIT Charlotte")
+os.chdir("C:/Users/cjmitchell/Desktop/Charlotte continuous training")
 
 class PIT:
     def __init__(self):
-        self.expName = "CJM02"
+        self.expName = "CJM04"
         self.dataPath = "Data"
         
         self.rt_clock = core.Clock()
@@ -36,15 +37,17 @@ class PIT:
     def runExperiment(self):
         self.start_experiment()
         
-        self.run_liking_ratings()
-        self.run_instrumental_training()
-        self.run_instrumental_knowledge_test()
+        self.run_continuous_instrumental_training()
         
-        self.run_outcome_devaluation()
-        self.run_liking_ratings(time="second")
-        
-        self.run_transfer_test()
-        self.run_experiment_knowledge_tests()
+#        self.run_liking_ratings()
+#        self.run_instrumental_training()
+#        self.run_instrumental_knowledge_test()
+#        
+#        self.run_outcome_devaluation()
+#        self.run_liking_ratings(time="second")
+#        
+#        self.run_transfer_test()
+#        self.run_experiment_knowledge_tests()
         
         self.thanksAndGoodbye()
     
@@ -95,7 +98,7 @@ class PIT:
         self.fileName = self.dataPath + "/" + "%s_Ppt_%s.csv" %(self.expName, self.pptNo)
     
     def open_window(self):
-        self.win = visual.Window(size=[2880, 1800], color="black",
+        self.win = visual.Window(size=[1920, 1080], color="black",
                     fullscr=True, allowGUI=False, checkTiming=True)
     
     def get_counterbalancing(self):
@@ -173,9 +176,81 @@ class PIT:
         self.press_space()
     
     def get_instrumental_training_trials(self):
-        trialTypes = ["O1O2","O3O4"]*24
+        if self.pptNo==99:
+            n = 4
+        else:
+            n = 24
+        trialTypes = ["O1O2","O3O4"]*n
         shuffle(trialTypes)
         return trialTypes
+    
+    def run_continuous_instrumental_training(self):
+        choiceText = visual.TextStim(self.win, text=self.choiceText, color="white", font="Arial", height=0.2)
+        trials = self.get_instrumental_training_trials()
+        trialNo = 0
+        
+        self.display_continuous_instrumental_training_instructions()
+        
+        for t in trials:
+            trialNo += 1
+            waiting = True
+            
+            if t == "O1O2":
+                rightCue = "O1"
+                leftCue = "O2"
+            elif t=="O3O4":
+                rightCue = "O3"
+                leftCue = "O4"
+            rightFood = self.outcomeMapping[rightCue]
+            leftFood = self.outcomeMapping[leftCue]
+            
+            choiceText.draw()
+            self.win.callOnFlip(self.rt_clock.reset)
+            self.win.flip()
+            
+            while waiting:
+                key_press = event.waitKeys(keyList=['q','p'], timeStamped=self.rt_clock)
+                
+                if choice([0,1], p=[0.9,0.1]):
+                    if key_press[0][0]=='q':
+                        cue = leftCue
+                        food = leftFood
+                        response = "Left"
+                    elif key_press[0][0]=='p':
+                        cue = rightCue
+                        food = rightFood
+                        response = "Right"
+                    
+                    text = "You win one " + food.upper() + " point"
+                    feedback = visual.TextStim(self.win, text=text, pos=(0,0), height=0.09)
+                    feedback.draw()
+                    self.win.flip()
+                    core.wait(self.feedbackTime)
+                    
+                    self.win.flip()
+                    core.wait(self.ITI)
+            
+                    if cue=="O1" or cue=="O2":
+                        devalued = 0
+                    else:
+                        devalued = 1 
+                        
+                    self.dataFile.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
+                    self.expName, self.pptNo, self.date, self.pptAge, self.pptGender, self.experimenter, 
+                    "InstrumentalTraining", trialNo, t, response, cue, food, devalued, key_press[0][1],"NA"))
+                    
+                    break
+    
+    def display_continuous_instrumental_training_instructions(self):
+        line1 = visual.TextStim(self.win, text='You can now earn the four foods shown before by pressing the left ("Q") or right ("P") key.', 
+                                font='helvetica', pos=(0,0.35), wrapWidth=1.5, height=0.1, alignHoriz='center')
+        line1.draw()
+        
+        line2 = visual.TextStim(self.win, text='Your task is to learn which keys earn each food.', 
+                                font='helvetica', pos=(0,0), wrapWidth=1.5, height=0.1)
+        line2.draw()
+        
+        self.press_space()
     
     def run_instrumental_training(self):
         trials = self.get_instrumental_training_trials()
@@ -537,7 +612,8 @@ class PIT:
         self.dataFile.close()
         
     def display_goodbye(self):      
-        line1 = visual.TextStim(self.win, text='Thanks for taking part in the experiment!', font='helvetica', pos=(0,0), wrapWidth=1.5, height=0.2)
+        line1 = visual.TextStim(self.win, text='Thanks for taking part in the experiment!', 
+                                font='helvetica', pos=(0,0), wrapWidth=1.5, height=0.1)
         line1.draw()
         
         self.press_space()
