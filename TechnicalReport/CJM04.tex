@@ -1,0 +1,230 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\geometry{letterpaper}                   
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1
+.tif`.png}
+
+\raggedright % So not straight on both sides
+\setlength{\parindent}{0.5in} % So indent paragraphs
+\usepackage{indentfirst} % So indent first paragraph after a heading
+\usepackage{titlesec}
+\usepackage{authblk}
+\titleformat{\section}[block]{\normalsize \bfseries \filcenter}{}{1em}{}
+\titleformat{\subsection}[block]{\normalsize \bfseries}{}{1em}{}
+\titleformat{\subsubsection}[runin]{\bfseries}{}{}{}[]
+\titlespacing{\subsubsection}{\parindent}{*2}{\wordsep}
+\setcounter{secnumdepth}{0}
+\usepackage{setspace}
+\usepackage{apacite}
+\usepackage{amsmath}
+\usepackage{color} % So can change text colour, helpful for editing
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage{graphicx} % So can add pictures
+\usepackage[labelfont=it, labelsep=period]{caption} 
+\usepackage{enumitem} % To format lists ok
+\usepackage[autostyle]{csquotes}  
+
+\usepackage{fancyhdr} % To add headers
+\setlength{\headheight}{15.2pt}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\lhead[CJM04]{CJM04}
+
+
+\title{PIT experiment with continuous and Pavlovian training}
+\author{C. E. R. Edmunds}
+\date{}% Activate to display a given date or no date
+
+\begin{document}
+
+%\maketitle
+
+\newpage
+% \begin{abstract}
+% \end{abstract}
+\doublespacing
+
+\section{Method}
+\subsection{Participants}
+The participants were 30 undergraduate psychology students from the University of Plymouth. They were awarded partial course credit for their participation. 
+
+\subsection{Materials}
+The experiment was run using PsychoPy \cite{Peirce2007, Peirce2009} on a 
+MacBook Pro with a 15-inch screen and responses were recorded with
+its keyboard.
+
+There were four food props: a 20g bag of Proper Corn Lightly Sea Salted popcorn, a 25g tub of Tesco home brand cashew nuts, a 40g bag of Cool Original Doritos and a 30g bag of Lightly Salted Kettle chips. These food items were also used in the outcome
+devaluation procedure. Prior to the experiment, the foods were placed in
+separate containers, with the food name on the lid. To devalue foods, cooking
+oil (11g) and ground cloves (5g) were mixed into a paste and applied liberally
+to the foods. The valued outcome remained unadulterated. 
+
+During the transfer test phase (detailed more fully below), pictures of the
+outcomes were used as stimuli. 
+
+\subsection{Procedure}
+Before the experiment began, participants were warned that they would be
+required to eat several foods during the experiment and that these foods might
+taste unpleasant. Then, the food props were presented and the participant was
+told that they could earn points for food in the following experiment.
+
+\paragraph{Liking ratings} Participants initially rated their desire to eat
+each food in a random order (1=``Not at all'', 7=``Very much''). Following the
+ratings, the props were removed. 
+
+\paragraph{Instrumental training} Participants were told that ``You can now
+earn the four foods shown before by pressing the left (``E'') or right (``I'')
+keys.'' and that ``Your task is to learn which keys earn each food.'' There were
+48 trials. They were also warned that they would have to press each button several times in order to receive a reward. 
+
+For this section, the outcomes were linked in pairs. In other words, at any point the participant could receive $O_1$ or $O_2$ by pressing the right or left keys respectively, or they could receive $O_3$ or $O_4$ by pressing the right or left keys respectively. Of course, the actual outcome given depended on which keys the participant pressed. The instrumental responses were reinforced on a ratio10 schedule, i.e. every single button press had a $1/10$ chance of resulting in the outcome being displayed.
+
+For the participant, ``$\leftarrow$ or $\rightarrow$'' was displayed in
+white in the centre of the screen. The participant was then free to press either the left or right key. On each button press, the participant hears a sound (basically, click boing of duration ~1 sec). If that particular response does not result in an outcome, nothing happens and the participant is free to press the button again. If that response does result in an outcome, then feedback was displayed (e.g., ``You win one CRISPS point.'') in white for 3000ms. The inter-trial interval was 500ms.
+
+\paragraph{Instrumental knowledge test}
+Immediately following instrumental training, we asked participants if they had explicit knowledge of the training contingencies. They were asked for each outcome, in a random order, ``Which key earned [OUTCOME] points, the left or right key?'' After each forced
+choice question, they also rated their confidence on a Likert scale (1=``Not at
+all confident'', 7=``Very confident''). 
+
+\paragraph{Pavlovian training}
+
+\paragraph{Outcome devaluation}
+Participants sampled all four of the outcomes, of which two were devalued. They
+were told that the devalued outcomes were out of date (a deception), and that
+these were the outcomes now available. Liking ratings were then 
+
+\paragraph{Transfer test}
+At the start of the transfer test, participants were told: 
+
+\blockquote{In this part of the task, you can earn the four foods by pressing
+the left (``E'') or right (``I'') key in the same way as before. You will only
+be told how much of each food you have earned at the end of the experiment.
+Also, sometimes pictures of the foods will be presented before you choose the
+left or right key. NOTE: You will be required to eat all of the food you have
+earned at the end of the experiment so choose carefully.}
+
+At the beginning of each trial, a picture stimulus was shown for 3000ms. The
+choice instruction then appeared (``$\leftarrow$ or $\rightarrow$'') until the
+participant made their choice. No feedback was given. The inter-trial interval
+was 500ms. The 64 trials were split into 8 rounds of 8 trials, with each
+stimulus appearing twice in each round in a random order. 
+
+\paragraph{Knowledge tests}
+Finally, participants were asked to complete several knowledge tests to check
+they had understood the experiment. First, they completed a second set of
+liking ratings. Second, they were asked to judge which of the four outcomes 
+were out of date. Confidence ratings were taken after each question. Third,
+they completed a second instrumental knowledge test. Finally, they were given a
+Pavlovian knowledge test, where each stimulus was shown and the participant was
+asked to say which outcome the stimulus represents. 
+
+%\begin{table}[b!]
+%	\centering
+%	\caption{Training and test summaries} \label{table:experimentSummary}
+%	\begin{tabular}{p{2cm} p{2cm} p{0.5cm} p{1.5cm} p{3cm} p{3.5cm}}
+%		\hline\noalign{\smallskip}
+%		\multicolumn{2}{c}{Training} && \multicolumn{3}{c}{Test}\\
+%		\noalign{\smallskip}\cline{1-2} \cline{4-6}\noalign{\smallskip}
+%		Element & Compound && Ratings & Forced choice & Implicit association\\
+%		\noalign{\smallskip}\hline\noalign{\smallskip}
+%		A+ {\it (6)} & A+ {\it (12)} && TX {\it (2)} & TN vs. TX {\it(1)}& Left: X,
+%+\\
+%		B+ {\it (6)} & B+ {\it (12)} && TN {\it (2)} & N vs. X {\it(1)}& Right: N,
+%-\\
+%		Z- {\it (6)} & Z- {\it (6)}  && A {\it (2)}&&\\
+%					 & T+ {\it (12)}	 && B {\it (2)}&& Left: N, +\\
+%					 & N- {\it (48)} && X {\it (2)}&& Right: X, -\\
+%					 & AX- {\it (24)}&& N  {\it (2)}&&\\
+%					 & BX- {\it (24)}&&&&\\
+%					 & AZ+ {\it (12)}&&&&\\
+%					 & BZ+ {\it (12)}&&&&\\
+%		\noalign{\smallskip}\hline
+%		\multicolumn{6}{p{14.5cm}}{\footnotesize Note: A-Z refer to cue types, ``+''
+%represents the outcome occurred (hair turned blonde/yellow screen), ``-''
+%represents no outcome (hair stayed grey/grey screen), and numbers in
+%parentheses denote the number of trials.}
+%	\end{tabular}
+%\end{table}
+
+
+\subsection{Analysis} 
+All analyses were conducted using R \cite{Rcite} and are available at
+\texttt{www.gitlab.com/ceredmunds/CJM04}.
+
+
+%\section{Results}
+%
+%\subsection{Instrumental knowledge tests and exclusions}
+%One participant failed the Pavlovian knowledge test. Nine participants failed
+%the instrumental knowledge tests, 1 in the first test and 8 more in the second.
+%With regards to participants' confidence in the instrumental ratings (see Figure~\ref{figure:CJM02confidenceGraph}), there was a significant interaction between test time and whether the cue had been devalued or not, $F(1,28)=4.94$, $\eta^2_g=0.01$, $p=.035$. Participants were more confident immediately after instrumental training than after the transfer test, $F(1,28)=63.46$, $\eta^2_g=0.45$, $p<.001$, and were less confident for devalued cues than valued ones, $F(1,28)=5.14$, $\eta^2_g=0.00$, $p=.031$. 
+%The 10 participants that failed the knowledge tests were removed from the
+%following analyses.
+%
+%\begin{figure}
+%	\centering
+%	\includegraphics[width=.66\textwidth]{Images/CJM02confidenceGraph.pdf}
+%	\caption{Mean confidence ratings for instrumental knowledge test. Error bars are 95\% confidence ratings.}
+%	\label{figure:CJM02confidenceGraph}
+%\end{figure}
+%
+%\subsection{Liking ratings}
+%Mean liking ratings are shown in Figure~\ref{figure:CJM02likingGraph}.
+%There was a significant interaction between test time and cue value,
+%$F(1,18)=46.77$, $\eta^2_g=0.37$, $p<.001$. There was also a significant main
+%effect of test time, $F(1,18)=12.68$, $\eta^2_g=0.11$, $p=.002$, and cue value,
+%$F(1,18)=23.51$, $\eta^2_g=0.24$, $p<.001$.
+%
+%\begin{figure}
+%	\centering
+%	\includegraphics[width=0.66\textwidth]{Images/CJM02likingGraph}
+%	\caption{Mean liking ratings. Ratings of 1 and 7 indicate wanting to eat the
+%outcome ``not at all'' and ``very much'' respectively.}
+%	\label{figure:CJM02likingGraph}
+%\end{figure}
+%
+%\subsection{Transfer phase}
+%Mean preference for response 1 ($R_1$) are shown in Figure~\ref{figure:CJM02transferGraph}.
+%
+%\begin{figure}
+%	\centering
+%	\includegraphics[width=0.66\textwidth]{Images/CJM02transferGraph}
+%	\caption{Transfer test results. Response choice was tested in the presence of
+%stimuli representing each outcome. The dependent variable is the percent choice
+%of the R1 response. 0.5 indicate no preference. Scores greater that 0.5
+%indicate a preference towards R1 and scores lower that 0.5 indicate a
+%preference to R2.}
+%	\label{figure:CJM02transferGraph}
+%\end{figure}
+%
+%There was a significant interaction between devaluation and associated response, $F(1,18)=13.79$, $\eta^2_g=0.29$, $p=.002$. As you might expect given the design, there was a significant main effect of response consistency, $F(1,18)=25.23$, $\eta^2_g=0.32$, $p=<.001$; participants pressed $R_1$ more for cues $O_1$ and $O_3$ than for the other two cues. 
+%
+%Furthermore, there was a significant different in response preference between the valued cues $O_1$ and $O_2$, $t(18)=10.73$, $d=2.45$, $p<.001$, but not for the devalued cues, $t(18)=0.15$, $d=0.04$, $p=.880$. 
+%
+%\begin{figure}
+%	\centering
+%	\includegraphics[width=.66\textwidth]{Images/CJM02violinGraph.pdf}
+%	\caption{Alternative view of the transfer phase data. The width of the bars gives a measure of density}
+%	\label{figure:CJM02violinGraph}
+%\end{figure}
+%
+%Figure~\ref{figure:CJM02violinGraph} gives an insight into why there are no significant differences in response preference between the two devalued cues. Participants appeared to be much more uncertain about their response choice here. From asking them to report their response strategy after training, there appear to be broadly two types of respondent (as well as a few who just button mashed/forgot everything, which would hopefully be excluded here):
+%
+%\begin{enumerate}
+%	\item these participants tried to be ``good'' and complete the task pressing the same buttons for all cues as in the instrumental phase. \\
+%	\item these participants tried to avoid the devalued outcomes. For the valued outcomes, they pressed the same keys as in the instrumental training phase. For the devalued outcomes, they pressed the opposite keys in an attempt to avoid receiving the outcome.\\
+%\end{enumerate}
+
+
+\section{Discussion}
+
+
+\newpage
+\bibliographystyle{apacite}
+\bibliography{References}
+
+\end{document}

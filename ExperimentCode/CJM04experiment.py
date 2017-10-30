@@ -2,13 +2,17 @@
 # -*- coding: utf-8 -*-
 # CJM02 - PIT experiment, adapted from Seabrooke et al. (2017)
 # CERE - 2-10-2017 - Created
+from psychopy import visual
 import os
 from itertools import permutations
 from numpy.random import choice
 from random import shuffle
-from psychopy import visual, event, core, gui, data
 
-os.chdir("C:/Users/cjmitchell/Desktop/Charlotte continuous training")
+from psychopy import prefs
+prefs.general['audioLib'] = ['pygame']
+from psychopy import sound, event, core, gui, data
+
+#os.chdir("C:/Users/cjmitchell/Desktop/Charlotte continuous training")
 
 class PIT:
     def __init__(self):
@@ -32,16 +36,17 @@ class PIT:
         self.stimuli = ["crisps", "popcorn", "nachos", "cashews"]
         self.imageFiles = {"crisps":"Images/crisps.bmp", "popcorn":"Images/popcorn.bmp",
                            "nachos":"Images/nachos.bmp", "cashews":"Images/cashews.bmp"}
+        self.cues = ["H","K", "S", "W"]
+        self.cueFiles = {"H":"Images/H.png", "K":"Images/K.png", "S":"Images/S.png", "W":"Images/W.png"}
         self.choiceText = u'\u2190' + ' or ' + u'\u2192'
     
     def runExperiment(self):
         self.start_experiment()
+        #self.run_liking_ratings()
         
-        self.run_continuous_instrumental_training()
-        
-#        self.run_liking_ratings()
-#        self.run_instrumental_training()
-#        self.run_instrumental_knowledge_test()
+        #self.run_continuous_instrumental_training()
+        self.run_pavlovian_training()
+#        
 #        
 #        self.run_outcome_devaluation()
 #        self.run_liking_ratings(time="second")
@@ -104,6 +109,9 @@ class PIT:
     def get_counterbalancing(self):
         reorderedFoods = [self.stimuli[i-1] for i in self.counterbalancing]
         self.outcomeMapping = dict(zip(self.outcomes, reorderedFoods))
+        
+        shuffle(self.cues)
+        self.outcomeCueMapping = dict(zip(self.outcomes, self.cues))
     
     def display_welcome(self):
         line1 = visual.TextStim(self.win, text='Welcome!', font='helvetica', pos=(0,0.35), wrapWidth=1.5, height=0.2)
@@ -193,7 +201,6 @@ class PIT:
         
         for t in trials:
             trialNo += 1
-            waiting = True
             
             if t == "O1O2":
                 rightCue = "O1"
@@ -208,8 +215,9 @@ class PIT:
             self.win.callOnFlip(self.rt_clock.reset)
             self.win.flip()
             
-            while waiting:
+            while True:
                 key_press = event.waitKeys(keyList=['q','p'], timeStamped=self.rt_clock)
+                self.play_button_sound()
                 
                 if choice([0,1], p=[0.9,0.1]):
                     if key_press[0][0]=='q':
@@ -240,80 +248,30 @@ class PIT:
                     "InstrumentalTraining", trialNo, t, response, cue, food, devalued, key_press[0][1],"NA"))
                     
                     break
+        core.wait(2)
+        self.run_instrumental_knowledge_test()
     
     def display_continuous_instrumental_training_instructions(self):
         line1 = visual.TextStim(self.win, text='You can now earn the four foods shown before by pressing the left ("Q") or right ("P") key.', 
                                 font='helvetica', pos=(0,0.35), wrapWidth=1.5, height=0.1, alignHoriz='center')
         line1.draw()
         
-        line2 = visual.TextStim(self.win, text='Your task is to learn which keys earn each food.', 
+        line2 = visual.TextStim(self.win, text='Your task is to learn which key earn each food.', 
                                 font='helvetica', pos=(0,0), wrapWidth=1.5, height=0.1)
         line2.draw()
         
-        self.press_space()
-    
-    def run_instrumental_training(self):
-        trials = self.get_instrumental_training_trials()
-        choiceText = visual.TextStim(self.win, text=self.choiceText, color="white", font="Arial", height=0.2)
-        trialNo = 0
-        
-        self.display_instrumental_training_instructions()
-        
-        for t in trials:
-            trialNo += 1
-            if t == "O1O2":
-                rightCue = "O1"
-                leftCue = "O2"
-            elif t=="O3O4":
-                rightCue = "O3"
-                leftCue = "O4"
-            rightFood = self.outcomeMapping[rightCue]
-            leftFood = self.outcomeMapping[leftCue]
-            
-            choiceText.draw()
-            self.win.callOnFlip(self.rt_clock.reset)
-            self.win.flip()
-            
-            key_press = event.waitKeys(keyList=['e','i'], timeStamped=self.rt_clock)
-            
-            if key_press[0][0]=="e":
-                cue = leftCue
-                food = leftFood
-                response = "Left"
-            elif key_press[0][0]=="i":
-                cue = rightCue
-                food = rightFood
-                response = "Right"
-            
-            text = "You win one " + food.upper() + " point"
-            
-            feedback = visual.TextStim(self.win, text=text, pos=(0,0), height=0.09)
-            feedback.draw()
-            self.win.flip()
-            core.wait(self.feedbackTime)
-            
-            self.win.flip()
-            core.wait(self.ITI)
-            
-            if cue=="O1" or cue=="O2":
-                devalued = 0
-            else:
-                devalued = 1 
-            
-            self.dataFile.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
-                self.expName, self.pptNo, self.date, self.pptAge, self.pptGender, self.experimenter, 
-                "InstrumentalTraining", trialNo, t, response, cue, food, devalued, key_press[0][1],"NA"))
-    
-    def display_instrumental_training_instructions(self):
-        line1 = visual.TextStim(self.win, text='You can now earn the four foods shown before by pressing the left ("E") or right ("I") key.', 
-                                font='helvetica', pos=(0,0.35), wrapWidth=1.5, height=0.1, alignHoriz='center')
-        line1.draw()
-        
-        line2 = visual.TextStim(self.win, text='Your task is to learn which keys earn each food.', 
-                                font='helvetica', pos=(0,0), wrapWidth=1.5, height=0.1)
-        line2.draw()
+        line3 = visual.TextStim(self.win, text='You will have to press each key several times for a food to be displayed.', 
+                                font='helvetica', pos=(0,-0.35), wrapWidth=1.5, height=0.1)
+        line3.draw()
         
         self.press_space()
+    
+    def play_button_sound(self):
+        click = sound.Sound('Sounds/click.wav')
+        click.play()
+        
+        boing = sound.Sound('Sounds/boing.wav')
+        boing.play()
     
     def run_instrumental_knowledge_test(self):
         outcomes = self.outcomes
@@ -335,12 +293,12 @@ class PIT:
             self.win.callOnFlip(self.rt_clock.reset)
             self.win.flip()
             
-            key_press = event.waitKeys(keyList=['e','i'], timeStamped=self.rt_clock)
-            if key_press[0][0]=="e":
+            key_press = event.waitKeys(keyList=['q','p'], timeStamped=self.rt_clock)
+            if key_press[0][0]=="q":
                 response = "Left"
                 if outcome=="O2" or outcome=="O4":
                     correct = 1
-            elif key_press[0][0]=="i":
+            elif key_press[0][0]=="p":
                 response = "Right"
                 if outcome=="O1" or outcome=="O3":
                     correct = 1
@@ -386,6 +344,188 @@ class PIT:
     def display_instrumental_knowledge_instructions(self):
         line1 = visual.TextStim(self.win, text='We would now like to test whether you know which key earned which foods', 
                                 font='helvetica', pos=(0,0.35), wrapWidth=1.5, height=0.1, alignHoriz='center')
+        line1.draw()
+        
+        self.press_space()
+    
+    def get_pavlovian_training_trials(self):
+        if self.pptNo==99:
+            n = 2
+        else:
+            n = 8
+        trialTypes = self.outcomes*n
+        shuffle(trialTypes)
+        return trialTypes
+    
+    def run_pavlovian_training(self):
+        trials = self.get_pavlovian_training_trials()
+        trialNo = 0
+        
+        self.display_pavlovian_training_instructions()
+        self.mouse = event.Mouse(visible=True, newPos=False, win=self.win)
+        
+        predicts = visual.TextStim(self.win, text='predicts', 
+                                font='helvetica', pos=(0,0.2), wrapWidth=1.5, height=0.1, alignHoriz='center')
+        
+        for t in trials:
+            trialNo += 1
+            
+            self.draw_single_cue(stimulus=self.outcomeCueMapping[t])
+            predicts.draw()
+            self.win.flip()
+            core.wait(0.5)
+            
+            self.draw_single_cue(stimulus=self.outcomeCueMapping[t])
+            predicts.draw()
+            response, rt, position = self.get_response()
+            
+            correct = 0
+            if response==self.outcomeMapping[t]:
+                correct = 1
+            
+            self.draw_prediction_feedback(outcome=t)
+            
+            self.win.flip()
+            core.wait(self.ITI)
+            
+        self.run_stimulus_knowledge_test()
+    
+    def display_pavlovian_training_instructions(self):
+        line1 = visual.TextStim(self.win, text='In the next section, your task is to predict which letter results in point for which food.', 
+                                font='helvetica', pos=(0,0.35), wrapWidth=1.5, height=0.1, alignHoriz='center')
+        line1.draw()
+        
+        line2 = visual.TextStim(self.win, text='Please use the mouse to respond.', 
+                                font='helvetica', pos=(0,0), wrapWidth=1.5, height=0.1)
+        line2.draw()
+        
+        self.press_space()
+    
+    def draw_single_cue(self, stimulus, color="white", shift=0):
+        if color=="white":
+            stimulus = visual.ImageStim(self.win, image=self.cueFiles[stimulus], pos=(0+shift,0.6))
+        elif color=="black":
+            stimulus = visual.ImageStim(self.win, image=self.cueFilesBlack[stimulus], pos=(0+shift,0.6))
+        stimulus.draw()
+    
+    def get_response(self):
+        responses = self.get_response_counterbalancing()
+        
+        rect1 = visual.Rect(self.win, height=0.15, width=0.3, pos=(0, 0), lineColor='white')
+        rect1.draw()
+        opt1 = visual.TextStim(self.win, text=responses[0], pos=(0, 0))
+        opt1.draw()
+        
+        rect2 = visual.Rect(self.win, height=0.15, width=0.3, pos=(0, -0.2), lineColor='white')
+        rect2.draw()
+        opt2 = visual.TextStim(self.win, text=responses[1], pos=(0, -0.2))
+        opt2.draw()
+        
+        rect3 = visual.Rect(self.win, height=0.15, width=0.3, pos=(0, -0.4), lineColor='white')
+        rect3.draw()
+        opt3 = visual.TextStim(self.win, text=responses[2], pos=(0, -0.4))
+        opt3.draw()
+        
+        rect4 = visual.Rect(self.win, height=0.15, width=0.3, pos=(0, -0.6), lineColor='white')
+        rect4.draw()
+        opt4 = visual.TextStim(self.win, text=responses[3], pos=(0, -0.6))
+        opt4.draw()
+        
+        self.win.flip()
+        
+        waiting=True
+        self.rt_clock.reset()
+        while waiting:
+            if self.mouse.isPressedIn(rect1, buttons=[0]):
+                rt = self.rt_clock.getTime()
+                response = responses[0]
+                position = "one"
+                waiting = False
+            elif self.mouse.isPressedIn(rect2, buttons=[0]):
+                rt = self.rt_clock.getTime()
+                response = responses[1]
+                position = "two"
+                waiting = False
+            elif self.mouse.isPressedIn(rect3, buttons=[0]):
+                rt = self.rt_clock.getTime()
+                response = responses[2]
+                position = "three"
+                waiting = False
+            elif self.mouse.isPressedIn(rect4, buttons=[0]):
+                rt = self.rt_clock.getTime()
+                response = responses[3]
+                position = "four"
+                waiting = False
+        
+        event.clearEvents()
+        return (response, rt, position)
+    
+    def get_response_counterbalancing(self):
+        responses = self.stimuli
+        shuffle(responses)
+        return responses
+    
+    def draw_prediction_feedback(self, outcome):
+        self.draw_single_cue(stimulus=self.outcomeCueMapping[outcome])
+        
+        text = "earns one " + self.outcomeMapping[outcome].upper() + " point"
+        feedback = visual.TextStim(self.win, text=text, pos=(0,0), height=0.09)
+        feedback.draw()
+        self.win.flip()
+        core.wait(self.feedbackTime)
+        
+    def run_stimulus_knowledge_test(self):
+        trialNo = 0
+        options = self.stimuli
+        shuffle(options)
+        
+        option1 = visual.TextStim(self.win, text="1. "+ options[0].upper(), font='helvetica', pos=(-0.6,-0.7), height=0.1)
+        option2 = visual.TextStim(self.win, text="2. "+ options[1].upper(), font='helvetica', pos=(-0.2,-0.7), height=0.1)
+        option3 = visual.TextStim(self.win, text="3. "+ options[2].upper(), font='helvetica', pos=(0.2,-0.7), height=0.1)
+        option4 = visual.TextStim(self.win, text="4. "+ options[3].upper(), font='helvetica', pos=(0.6,-0.7), height=0.1)
+        
+        outcomes = self.outcomes
+        shuffle(outcomes)
+        self.display_stimulus_knowledge_instructions()
+        
+        instruction = visual.TextStim(self.win, text="Which food did this stimulus represent?", 
+                                      font='helvetica', pos=(0,0), height=0.1)
+        
+        for outcome in outcomes:
+            trialNo += 1
+            correct=0
+            
+            stimulus = visual.ImageStim(self.win, image=self.cueFiles[self.outcomeCueMapping[outcome]], pos=(0,0.5))
+            stimulus.draw()
+            option1.draw()
+            option2.draw()
+            option3.draw()
+            option4.draw()
+            instruction.draw()
+            
+            self.win.callOnFlip(self.rt_clock.reset)
+            self.win.flip()
+            key_press = event.waitKeys(keyList=['1','2','3','4'], timeStamped=self.rt_clock)
+            
+            if options[int(key_press[0][0])-1]==self.outcomeMapping[outcome]:
+                correct=1
+            
+            self.win.flip()
+            core.wait(self.ITI)
+            
+            if outcome=="O1" or outcome=="O2":
+                devalued = 0
+            else:
+                devalued = 1 
+                
+            self.dataFile.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
+                self.expName, self.pptNo, self.date, self.pptAge, self.pptGender, self.experimenter, 
+                "StimulusTest", trialNo, outcome, key_press[0][0], options[int(key_press[0][0])-1], 
+                self.outcomeMapping[outcome], devalued, key_press[0][1], correct))
+    
+    def display_stimulus_knowledge_instructions(self):
+        line1 = visual.TextStim(self.win, text='We would now like to check whether you know which picture represented which food', 
+                                font='helvetica', pos=(0,0), wrapWidth=1.5, height=0.1, alignHoriz='center')
         line1.draw()
         
         self.press_space()
@@ -541,63 +681,7 @@ class PIT:
     def run_experiment_knowledge_tests(self):
         self.run_instrumental_knowledge_test()
         
-        self.run_stimulus_knowledge_test()
-    
-    def run_stimulus_knowledge_test(self):
-        trialNo = 0
-        options = self.stimuli
-        shuffle(options)
-        
-        option1 = visual.TextStim(self.win, text="1. "+ options[0].upper(), font='helvetica', pos=(-0.6,-0.7), height=0.1)
-        option2 = visual.TextStim(self.win, text="2. "+ options[1].upper(), font='helvetica', pos=(-0.2,-0.7), height=0.1)
-        option3 = visual.TextStim(self.win, text="3. "+ options[2].upper(), font='helvetica', pos=(0.2,-0.7), height=0.1)
-        option4 = visual.TextStim(self.win, text="4. "+ options[3].upper(), font='helvetica', pos=(0.6,-0.7), height=0.1)
-        
-        outcomes = self.outcomes
-        shuffle(outcomes)
-        self.display_stimulus_knowledge_instructions()
-        
-        instruction = visual.TextStim(self.win, text="Which food did this picture represent?", 
-                                      font='helvetica', pos=(0,0), height=0.1)
-        
-        for outcome in outcomes:
-            trialNo += 1
-            correct=0
-            
-            stimulus = visual.ImageStim(self.win, image=self.imageFiles[self.outcomeMapping[outcome]], pos=(0,0.5))
-            stimulus.draw()
-            option1.draw()
-            option2.draw()
-            option3.draw()
-            option4.draw()
-            instruction.draw()
-            
-            self.win.callOnFlip(self.rt_clock.reset)
-            self.win.flip()
-            key_press = event.waitKeys(keyList=['1','2','3','4'], timeStamped=self.rt_clock)
-            
-            if options[int(key_press[0][0])-1]==self.outcomeMapping[outcome]:
-                correct=1
-            
-            self.win.flip()
-            core.wait(self.ITI)
-            
-            if outcome=="O1" or outcome=="O2":
-                devalued = 0
-            else:
-                devalued = 1 
-                
-            self.dataFile.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
-                self.expName, self.pptNo, self.date, self.pptAge, self.pptGender, self.experimenter, 
-                "StimulusTest", trialNo, outcome, key_press[0][0], options[int(key_press[0][0])-1], 
-                self.outcomeMapping[outcome], devalued, key_press[0][1], correct))
-    
-    def display_stimulus_knowledge_instructions(self):
-        line1 = visual.TextStim(self.win, text='We would now like to check whether you know which picture represented which food', 
-                                font='helvetica', pos=(0,0), wrapWidth=1.5, height=0.1, alignHoriz='center')
-        line1.draw()
-        
-        self.press_space()
+        self.run_pavlovian_knowledge_test()
     
     def get_transfer_test_trials(self):
         trialTypes = self.outcomes*8
