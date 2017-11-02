@@ -111,6 +111,13 @@ class PIT:
         
         shuffle(self.cues)
         self.outcomeCueMapping = dict(zip(self.outcomes, self.cues))
+        
+        if self$pptNo%2:
+            devalued = [0,1,0,1]
+        else:
+            devalued = [1,0,1,0]
+        self.devalued = dict(zip(self.outcomes, devalued))
+        self.instrumentalResponse = dict(zip(self.outcomes, ['Right','Left','Right','Left']
     
     def display_welcome(self):
         line1 = visual.TextStim(self.win, text='Welcome!', font='helvetica', pos=(0,0.35), wrapWidth=1.5, height=0.2)
@@ -159,19 +166,10 @@ class PIT:
             self.win.flip()
             core.wait(self.ITI)
             
-            if outcome=="O1" or outcome=="O2":
-                devalued = 0
-            else:
-                devalued = 1
-            if outcome=="O1" or outcome=="O3":
-                instrumentalResponse="Right"
-            else:
-                instrumentalResponse="Left"
-            
             self.dataFile.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
                 self.expName, self.pptNo, self.date, self.pptAge, self.pptGender, self.experimenter,self.counterbalance,
                 ExpPhase,trialNo,"NA","Liking",outcome,self.outcomeMapping[outcome],self.outcomeCueMapping[outcome],
-                instrumentalResponse,devalued,ratingScale.getRating(),ratingScale.getRT(),"NA",
+                self.instrumentalResponse[outcome],self.devalued[outcome],ratingScale.getRating(),ratingScale.getRT(),"NA",
                 "NA","NA"))
     
     def display_liking_ratings_instructions(self, time="first"):
@@ -208,11 +206,9 @@ class PIT:
             if t == "O1O2":
                 rightCue = "O1"
                 leftCue = "O2"
-                devalued = 0 
             elif t=="O3O4":
                 rightCue = "O3"
                 leftCue = "O4"
-                devalued = 1
             rightFood = self.outcomeMapping[rightCue]
             leftFood = self.outcomeMapping[leftCue]
             
@@ -250,7 +246,7 @@ class PIT:
                     self.dataFile.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
                     self.expName,self.pptNo,self.date,self.pptAge,self.pptGender,self.experimenter,self.counterbalance,
                     "InstrumentalTraining",trialNo,"NA",t,cue,food,self.outcomeCueMapping[cue],
-                    response,devalued,response,rt,keys.count("q"),
+                    response,self.devalued[t],response,rt,keys.count("q"),
                     keys.count("p"),"NA"))
                     
                     break
@@ -308,29 +304,21 @@ class PIT:
             key_press = event.waitKeys(keyList=['q','p'], timeStamped=self.rt_clock)
             if key_press[0][0]=="q":
                 response = "Left"
-                instrumentalResponse = "Right"
                 if outcome=="O2" or outcome=="O4":
                     correct = 1
-                    instrumentalResponse = "Left"
             elif key_press[0][0]=="p":
                 response = "Right"
-                instrumentalResponse = "Left"
                 if outcome=="O1" or outcome=="O3":
                     correct = 1
-                    instrumentalResponse = "Right"
             
             self.win.flip()
             core.wait(self.ITI)
             
-            if outcome=="O1" or outcome=="O2":
-                devalued = 0
-            else:
-                devalued = 1 
                 
             self.dataFile.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
                 self.expName,self.pptNo,self.date,self.pptAge,self.pptGender,self.experimenter,self.counterbalance,
                 ExpPhase,trialNo,"NA","Choice",outcome,self.outcomeMapping[outcome],self.outcomeCueMapping[outcome],
-                instrumentalResponse,devalued,response,key_press[0][1],"NA",
+                self.instrumentalResponse[outcome],self.devalued[outcome],response,key_press[0][1],"NA",
                 "NA",correct))
             
             self.win.callOnFlip(self.rt_clock.reset)
@@ -355,21 +343,8 @@ class PIT:
             self.dataFile.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
                 self.expName,self.pptNo,self.date,self.pptAge,self.pptGender,self.experimenter,self.counterbalance,
                 ExpPhase,trialNo,"NA","Confidence",outcome,self.outcomeMapping[outcome],self.outcomeCueMapping[outcome],
-                instrumentalResponse,devalued,ratingScale.getRating(),ratingScale.getRT(),"NA",
+                self.instrumentalResponse[outcome],self.devalued[outcome],ratingScale.getRating(),ratingScale.getRT(),"NA",
                 "NA","NA"))
-    
-    def get_outcome_properties(self, t):
-        if t=="O1" or t=="O2":
-            devalued = 0
-        else:
-            devalued = 1
-        
-        if t=="O1" or t=="O3":
-            instrumentalResponse = "Right"
-        else:
-            instrumentalResponse = "Left"
-        
-        return (devalued, instrumentalResponse)
     
     def display_instrumental_knowledge_instructions(self):
         line1 = visual.TextStim(self.win, text='We would now like to test whether you know which key earned which foods', 
@@ -418,12 +393,10 @@ class PIT:
             self.win.flip()
             core.wait(self.ITI)
             
-            devalued, instrumentalResponse = self.get_outcome_properties(t)
-            
             self.dataFile.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
                 self.expName,self.pptNo,self.date,self.pptAge,self.pptGender,self.experimenter,self.counterbalance,
                 "PavlovianTraining",trialNo,"NA",position,t,self.outcomeMapping[t],self.outcomeCueMapping[t],
-                instrumentalResponse,devalued,response,rt,"NA",
+                self.instrumentalResponse[t],self.devalued[t],response,rt,"NA",
                 "NA",correct))
         
         self.mouse = event.Mouse(visible=False, newPos=False, win=self.win)
@@ -557,12 +530,10 @@ class PIT:
             self.win.flip()
             core.wait(self.ITI)
             
-            devalued, instrumentalResponse = self.get_outcome_properties(outcome)
-            
             self.dataFile.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
                 self.expName,self.pptNo,self.date,self.pptAge,self.pptGender,self.experimenter,self.counterbalance,
                 ExpPhase,trialNo,"NA",outcome,outcome,self.outcomeMapping[outcome],self.outcomeCueMapping[outcome],
-                instrumentalResponse,devalued,options[int(key_press[0][0])-1],key_press[0][1],"NA",
+                self.instrumentalResponse[outcome],self.devalued[outcome],options[int(key_press[0][0])-1],key_press[0][1],"NA",
                 "NA",correct))
             
     def display_stimulus_knowledge_instructions(self):
@@ -611,11 +582,10 @@ class PIT:
                         keys += key_press
                         event.clearEvents(eventType='keyboard')
                 
-                devalued, instrumentalResponse = self.get_outcome_properties(t)
                 self.dataFile.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
                 self.expName, self.pptNo, self.date, self.pptAge, self.pptGender, self.experimenter, self.counterbalance,
                 "TransferTest",trialNo,subt+1,"Extinction",t,self.outcomeMapping[t],self.outcomeCueMapping[t],
-                instrumentalResponse,devalued,"NA","NA",keys.count('q'),
+                self.instrumentalResponse[t],self.devalued[t],"NA","NA",keys.count('q'),
                 keys.count('p'),"NA"))
             
             self.win.callOnFlip(self.rt_clock.reset)
@@ -632,11 +602,11 @@ class PIT:
                         keys += key_press
                         event.clearEvents(eventType='keyboard')
                 
-                devalued, instrumentalResponse = self.get_outcome_properties(t)
+
                 self.dataFile.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
                 self.expName, self.pptNo, self.date, self.pptAge, self.pptGender, self.experimenter, self.counterbalance,
                 "TransferTest",trialNo,subt+1,"Stimulus",t,self.outcomeMapping[t],self.outcomeCueMapping[t],
-                instrumentalResponse,devalued,"NA","NA",keys.count('q'),
+                self.instrumentalResponse[t],self.devalued[t],"NA","NA",keys.count('q'),
                 keys.count('p'),"NA"))
 
     def display_transfer_test_instructions(self):
