@@ -34,7 +34,7 @@ class PIT:
         
         self.outcomes = ["O1","O2","O3","O4"]
         self.stimuli = ["crisps", "popcorn", "nachos", "cashews"]
-        self.cues = ["H","K", "S", "W"]
+        self.cues = ["H", "K", "S", "W"]
         self.cueFiles = {"H":"Images/H.png", "K":"Images/K.png", "S":"Images/S.png", "W":"Images/W.png"}
         self.choiceText = u'\u2190' + ' or ' + u'\u2192'
     
