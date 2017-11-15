@@ -112,10 +112,7 @@ class PIT:
         shuffle(self.cues)
         self.outcomeCueMapping = dict(zip(self.outcomes, self.cues))
         
-        if self$pptNo%2:
-            devalued = [0,1,0,1]
-        else:
-            devalued = [1,0,1,0]
+        devalued = [0,0,1,1]
         self.devalued = dict(zip(self.outcomes, devalued))
         self.instrumentalResponse = dict(zip(self.outcomes, ['Right','Left','Right','Left']
     
